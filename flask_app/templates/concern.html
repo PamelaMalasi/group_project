@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<style>
+
+  .t1{
+    width: 700px;
+    margin-left: 500px;
+  }
+</style>
+<body>
+  <div class="conn">
+  <nav class="d-flex navbar2 justify-content-between">
+    <img src="static\img\logooo.png" alt="" class="logo">
+
+      <div class="d-flex justify-content-between">
+      <a style="height:40px; margin-top: 20px;" class="btn btn-success" href="/" >Home</a>  
+      <a  style="height:40px; margin-top: 20px;"class="btn btn-primary" href="/logout">Logout</a>
+    </div>
+  </nav>
+
+  <div class="map" style="margin-top: 20px; color: white">MAP HERE</div>
+
+    
+    <div class="col-lg-12 p-5">
+        <h2 class="text-center" style=" color: rgb(91, 211, 75);">Concerns</h2>
+
+        <table class="table table-striped t1" style="background-color: rgba(246, 240, 240, 0.5);">
+            <thead>
+              <tr>
+                <th scope="col">No</th>
+                <th scope="col">Concern</th>
+                <th scope="col">Image</th>
+                <th scope="col">Location</th>            
+                <th scope="col">Relevant to</th>
+                <th scope="col">More</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for post in posts %}
+            {% if loggedUser.id != post.user_id %}
+  
+            <tr class="table-heigh">
+                
+                <td class="table-row-position">{{post.name}}</td>
+                <td class="table-row-position"><img class="image-dashboard image-buy" src="..\static\UPLOAD_FOLDER\{{post.image}}" alt="Image" onmouseover="scale(this, 4)" onmouseleave="scale(this, 1)">
+                </td>
+                <td class="table-row-position">{{post.location}}</td>
+                <td class="table-row-position">{{post.num_saves}} person/s</td>
+                <td class="table-row-position">
+
+                <a class="btn btn-info" href="/post/{{post.id}}">View</a>
+                <a class="btn btn-success" href="/delete/post/{{post.id}}">Volunteer</a>
+                {% if post.id in savedposts  %}
+                <a class="btn btn-warning" href="/unsave/{{post.id}}">Undo</a>
+                {% else %}
+                    <a class="btn btn-primary" href="/save/{{post.id}}">Same concern</a>
+                {% endif %}
+                
+                </td>
+              </tr>
+              {% endif %}
+            {% endfor %}
+            </tbody>
+          </table>
+    </div>
+  </div>
+  
+</body>
+<script type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</html>
