@@ -6,8 +6,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
+  </head>
+<style>
+h1{
+  margin-top: -60px;
+}
+.hbody{
+   background-color:  rgba(0,0,0,.5);
+   width: 420px;
+}
+.trailer {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+z-index: 10000;
+background:rgba(9, 9, 9, 0.796);
+width: 100%;
+height: 100%;
+display: flex;
+justify-content: center;
+visibility: hidden;
+opacity: 0;
+  }
+
+  .trailer.active{
+    visibility: visible;
+    opacity: 1;
+  }
+  .trailer video {
+    position: relative;
+    max-width: 900px;
+    outline: none;
+  }
+
+  .close{
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    cursor: pointer;
+    filter: invert(1);
+    max-width:60px;
+    height: 50px;
+  }
+
+  @media (max-width: 991px){
+    .trailer video {
+      max-width: 90%;
+    }
+  }
+
+</style>
+
 <body class="body">
   <div class="conn">
     <nav class="d-flex navbar2 justify-content-between">
@@ -18,13 +70,88 @@
         <a  style="height:40px; margin-top: 20px;"class="btn btn-primary" href="/logout">Logout</a>
       </div>
     </nav>
-    
+    <h4 class="text-success hbody">  Use <span class="text-danger"> Google Maps</span> for accurate location</h4>
+      <h6 class="text-light"> Watch this <span>
+      <a href="#" onclick="toggle();">video</a>
 
-    <form enctype="multipart/form-data" class="w-50 m-auto p-5 border rounded  mt-3" style="background-color: rgba(0,0,0,.5);" action="/create/post" method="post">
-        <h2 class="text-center text-light">Share your concern</h2>
-        <div class="form-row">
+      <div class="trailer">
+        <video src="/static/screenr.mp4" controls="true"></video>
+      <img src="/static/img/closee.png" class="close" onclick="toggle();">
+    </div>
+    <script type="text/javascript">
+      function toggle(){
+        var trailer = document.querySelector(".trailer")
+        var video = document.querySelector("video");
+        trailer.classList.toggle("active");
+        video.pause();
+        video.currentTime = 0;
+      }
+    </script>
+
+</span>
+on how to use it </h6>
+
+
+
+  <input type="text" id="search-input" placeholder="Search">
+ 
+    <div class="block">
+  
+      <div id="map"></div>
+  <script>
+    function initMap() {
+      var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 12,
+        center: { lat: 37.7749, lng: -122.4194 }
+      });
+
+      var input = document.getElementById('search-input');
+      var searchBox = new google.maps.places.SearchBox(input);
+
+      map.addListener('bounds_changed', function() {
+        searchBox.setBounds(map.getBounds());
+      });
+
+      var markers = [];
+
+      searchBox.addListener('places_changed', function() {
+        var places = searchBox.getPlaces();
+
+        if (places.length === 0)
+          return;
+
+        markers.forEach(function(marker) {
+          marker.setMap(null);
+        });
+        markers = [];
+
+        var bounds = new google.maps.LatLngBounds();
+        places.forEach(function(place) {
+          if (!place.geometry)
+            return;
+
+          markers.push(new google.maps.Marker({
+            map: map,
+            title: place.name,
+            position: place.geometry.location
+          }));
+
+          if (place.geometry.viewport)
+            bounds.union(place.geometry.viewport);
+          else
+            bounds.extend(place.geometry.location);
+        });
+        map.fitBounds(bounds);
+      });
+    }
+  </script>
+<!--//////kodi per te vendosur kodin tend API\\\\\ <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap"></script> -->
+
+    <form enctype="multipart/form-data" class="w-50 m-auto p-5 border rounded table3" style="background-color: rgba(0,0,0,.5); height: 560px;" action="/create/post" method="post">
+        <h2 class="text-center text-success mb-10">Share your concern</h2>
+        <div class="form-row mb-10">
             <label  for="name" class="text-light">Concern:</label>
-            <input type="text" class="form-control" name="name" placeholder="Enter product name">
+            <input type="text" class="form-control focus" name="name" placeholder="Enter product name">
         </div>
         {% with messages = get_flashed_messages(category_filter=["namePost"]) %}
         {% if messages %}
@@ -35,9 +162,22 @@
         {% endwith %}
         <div class="form-row">
           <label  for="location" class="text-light">Location:</label>
-          <input type="text" class="form-control" name="location" placeholder="Enter product price">
+          <input type="text" class="form-control " name="location" placeholder="Write down the location">
         </div>
+        
         {% with messages = get_flashed_messages(category_filter=["locationPost"]) %}
+        {% if messages %}
+        {% for message in messages %}
+        <p class="text-danger text-center">{{message}}</p>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <div class="form-row">
+          <label  for="linki" class="text-light">Link</label>
+          <input type="text" class="form-control" name="linki" placeholder="Put the location link here">
+        </div>
+        
+        {% with messages = get_flashed_messages(category_filter=["linkiPost"]) %}
         {% if messages %}
         {% for message in messages %}
         <p class="text-danger text-center">{{message}}</p>
@@ -71,7 +211,7 @@
         {% endwith %}
         <div class="form-row">
             <label  for="description" class="text-light">Description:</label>
-            <textarea class="form-control" name="description" cols="30" rows="5"></textarea>
+            <textarea class="form-control" name="description" cols="30" rows="3"></textarea>
         </div>
         {% with messages = get_flashed_messages(category_filter=["descriptionPost"]) %}
         {% if messages %}
@@ -81,5 +221,8 @@
         {% endif %}
         {% endwith %}
         <button class="mt-2 btn btn-success">Post</button>
-</body>
+       
+      </div>
+      <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUm-b9XKzft0Xz2bUqVSNCWTokmOBpCGQ&libraries=places&callback=initMap"></script>
+    </body>
 </html>

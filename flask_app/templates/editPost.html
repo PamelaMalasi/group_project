@@ -43,9 +43,21 @@
       {% endif %}
       {% endwith %}
 
+      <div class="form-row">
+        <label  for="linki">Link:</label>
+        <input type="text" class="form-control" value="{{post.location}}" name="linki" placeholder="Enter locattion">
+    </div>
+    {% with messages = get_flashed_messages(category_filter=["linkiPost"]) %}
+    {% if messages %}
+    {% for message in messages %}
+    <p class="text-danger text-center">{{message}}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
         <div class="form-row">
           <label  for="contact">Contact:</label>
-          <input type="text" class="form-control" name="contact" placeholder="Please enter a form of contact">
+          <input type="text" value="{{post.contact}}" class="form-control" name="contact" placeholder="Please enter a form of contact">
         </div>
       {% with messages = get_flashed_messages(category_filter=["contactPost"]) %}
       {% if messages %}

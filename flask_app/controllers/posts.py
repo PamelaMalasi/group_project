@@ -54,7 +54,7 @@ def createPost():
             time = datetime.now().strftime("%d%m%Y%S%f")
             time += filename1
             filename1=time
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'],filename1))
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'],filename1)) 
         
         # 4 - Save it in the db at data 
         data = {
@@ -62,6 +62,7 @@ def createPost():
             'description': request.form['description'],
             'contact': request.form['contact'],
             'location': request.form['location'],
+            'linki': request.form['linki'],
             'user_id': session['user_id'],
             'image' : filename1
         }
@@ -99,7 +100,7 @@ def viewPost(id):
         loggedUserSavedPost = User.get_user_saved_posts(data)
 
 
-        return render_template('showOne.html',savedpodts=loggedUserSavedPost, loggedUser = loggedUser, post= post, savesNr= savesNr)
+        return render_template('showOne.html',savedposts=loggedUserSavedPost, loggedUser = loggedUser, post= post, savesNr= savesNr)
     return redirect('/')
 
 @app.route('/edit/post/<int:id>', methods = ['POST'])
@@ -141,7 +142,7 @@ def updatePost(id):
                 'description': request.form['description'],
                 'contact': request.form['contact'],
                 'location': request.form['location'],
-
+                'linki': request.form['linki'],
                 'post_id': post['id'],
                 'user_id': session['user_id'],
                 'image' : filename1
@@ -203,6 +204,8 @@ def unsavePost(id):
     return redirect('/')
 
 
-
+@app.route('/volunteer')
+def volunteer():
+   return render_template('volunteer.html')
 
 

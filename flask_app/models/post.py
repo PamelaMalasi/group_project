@@ -2,13 +2,14 @@ from flask_app.config.mysqlconnection import connectToMySQL
 from flask import flash
 
 class Post:
-    db_name = 'vntt'
+    db_name = 'volunteer'
     def __init__( self , data ):
         self.id = data['id']
         self.name = data['name']
         self.description = data['description']
         self.contact = data['contact']
         self.location = data['location']
+        self.link = data['linki']
         self.user_id = data['user_id']
         self.image = data['image']
         self.created_at = data['created_at']
@@ -41,13 +42,13 @@ class Post:
     #CREATE
     @classmethod
     def save(cls, data):
-        query = "INSERT INTO posts (name, description, location, contact, image, user_id) VALUES ( %(name)s, %(description)s, %(location)s, %(contact)s, %(image)s, %(user_id)s);"
+        query = "INSERT INTO posts (name, description, location, linki, contact, image, user_id) VALUES ( %(name)s, %(description)s, %(location)s ,%(linki)s, %(contact)s, %(image)s, %(user_id)s);"
         return connectToMySQL(cls.db_name).query_db(query, data)  
     
     #UPDATE
     @classmethod
     def update(cls, data):
-        query = "UPDATE posts SET name = %(name)s, description = %(description)s,location = %(location)s, category = %(contact)s image = %(image)s WHERE posts.id = %(post_id)s;"
+        query = "UPDATE posts SET name = %(name)s, description = %(description)s,location = %(location)s, linki = %(linki)s, contact = %(contact)s, image = %(image)s WHERE posts.id = %(post_id)s;"
         return connectToMySQL(cls.db_name).query_db(query, data) 
     
      
@@ -103,6 +104,9 @@ class Post:
             is_valid= False
         if not post.get('location'):
             flash('Please include location', 'locationPost')
+            is_valid = False
+        if not post.get('linki'):
+            flash('Please include location', 'linkiPost')
             is_valid = False
 
         return is_valid

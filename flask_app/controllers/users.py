@@ -115,3 +115,7 @@ def sell():
 def logout():
     session.clear()
     return redirect('/loginPage')
+@app.route('/map')
+def map():
+    return render_template('map.html')
+

@@ -121,3 +121,53 @@
 }
 
 
+.table3 {
+    width: 100px;
+}
+
+
+#map {
+    height: 400px;
+    width: 300px;
+    margin-right: 50px;
+  }
+  .block {
+    display: flex;
+    margin-top: -0px;
+  }
+
+  .block1 {
+    display: flex;
+  }
+
+  .table3 {
+    width: 200px;
+    margin-top: -60px;
+  }
+.redd{
+  margin-top: -15px;
+}
+
+  .redd::-webkit-input-placeholder {
+    /* WebKit, Blink, Edge */
+    color: rgb(212, 38, 38);
+}
+.redd:-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    color: rgb(212, 38, 38);
+    opacity: 1;
+}
+.redd::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    color: rgb(212, 38, 38);
+    opacity: 1;
+}
+.redd:-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    color: rgb(212, 38, 38);
+}
+
+.form-control:focus {
+        border-color: #04ef24;
+        box-shadow: 0 0 0 0.2rem rgba(24, 247, 20, 0.25);
+    } 

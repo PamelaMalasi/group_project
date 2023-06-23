@@ -7,13 +7,31 @@
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
 
+    <style>
+   
   .t1{
-    width: 700px;
-    margin-left: 500px;
+    width: 800px;
+    margin-left: 400px;
   }
+
+  .tableconcern{
+    margin-top: -450px;
+  }
+
+  .small-box {
+      width: 40px;
+      height: 40px;
+      background-color: #ec1313;
+      border: 1px solid #e42d2d;
+    }
+
+    img {
+      height: 30px;
+      width: 30px;
+      margin-left: 20px;
+    }
 </style>
 <body>
   <div class="conn">
@@ -25,23 +43,79 @@
       <a  style="height:40px; margin-top: 20px;"class="btn btn-primary" href="/logout">Logout</a>
     </div>
   </nav>
+  
+  <h4>Search locations by coordinates</h4> 
+  <input type="text" id="search-input" placeholder="Search">
 
-  <div class="map" style="margin-top: 20px; color: white">MAP HERE</div>
+  <div id="map"></div>
 
-    
-    <div class="col-lg-12 p-5">
+  
+  <script>
+    function initMap() {
+      var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 12,
+        center: { lat: 37.7749, lng: -122.4194 }
+      });
+
+      var input = document.getElementById('search-input');
+      var searchBox = new google.maps.places.SearchBox(input);
+
+      map.addListener('bounds_changed', function() {
+        searchBox.setBounds(map.getBounds());
+      });
+
+      var markers = [];
+
+      searchBox.addListener('places_changed', function() {
+        var places = searchBox.getPlaces();
+
+        if (places.length === 0)
+          return;
+
+        markers.forEach(function(marker) {
+          marker.setMap(null);
+        });
+        markers = [];
+
+        var bounds = new google.maps.LatLngBounds();
+        places.forEach(function(place) {
+          if (!place.geometry)
+            return;
+
+          markers.push(new google.maps.Marker({
+            map: map,
+            title: place.name,
+            position: place.geometry.location
+          }));
+
+          if (place.geometry.viewport)
+            bounds.union(place.geometry.viewport);
+          else
+            bounds.extend(place.geometry.location);
+        });
+        map.fitBounds(bounds);
+      });
+    }
+  </script>
+<!--//////kodi per te vendosur kodin tend API\\\\\ <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap"></script> -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUm-b9XKzft0Xz2bUqVSNCWTokmOBpCGQ&libraries=places&callback=initMap"></script>
+
+ 
+
+    <div class="col-lg-10 p-1 tableconcern">
         <h2 class="text-center" style=" color: rgb(91, 211, 75);">Concerns</h2>
 
         <table class="table table-striped t1" style="background-color: rgba(246, 240, 240, 0.5);">
             <thead>
               <tr>
-                <th scope="col">No</th>
+                
                 <th scope="col">Concern</th>
                 <th scope="col">Image</th>
                 <th scope="col">Location</th>            
+                <th scope="col">Coordinates/Link</th>
                 <th scope="col">Relevant to</th>
-                <th scope="col">More</th>
-                <th scope="col"></th>
+                <th scope="col">Actions</th>
+                <th scope="col">Emergency</th>
               </tr>
             </thead>
             <tbody>
@@ -54,6 +128,15 @@
                 <td class="table-row-position"><img class="image-dashboard image-buy" src="..\static\UPLOAD_FOLDER\{{post.image}}" alt="Image" onmouseover="scale(this, 4)" onmouseleave="scale(this, 1)">
                 </td>
                 <td class="table-row-position">{{post.location}}</td>
+                <td class="table-row-position">
+                  {% if ',' in post.linki %}
+                    <a href="https://www.google.com/maps?q={{ post.linki }}" target="_blank">{{ post.linki }}</a>
+                  {% elif post.linki.startswith('http://') or post.linki.startswith('https://') %}
+                    <a href="{{ post.linki }}" target="_blank">{{ post.linki }}</a>
+                  {% else %}
+                    {{ post.linki }}
+                  {% endif %}
+                </td>
                 <td class="table-row-position">{{post.num_saves}} person/s</td>
                 <td class="table-row-position">
 
@@ -66,6 +149,13 @@
                 {% endif %}
                 
                 </td>
+                <td class="table-row-position">
+                  {% if post.num_saves == 0 %}
+                  <img src="/static/img/grey.png" alt="Emergency Image">
+                  {% elif post.num_saves >= 1 %}
+                  <img src="/static/img/red.png" alt="Emergency Image">
+                  {% endif %}
+                </td>
               </tr>
               {% endif %}
             {% endfor %}
@@ -73,8 +163,11 @@
           </table>
     </div>
   </div>
-  
+</div>
+
 </body>
 <script type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVol2KKEIKgW7vpx8DN7jujBVnr9G1TxQ"></script>
+
 
 </html>
