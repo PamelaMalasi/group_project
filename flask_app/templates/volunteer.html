@@ -11,12 +11,67 @@
     <title>Dashboard</title>
 </head>
 
+<style>
+.chat-container {
+    width: 300px;
+    margin: 50px auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+#chat-log {
+    height: 300px;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+#user-input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+#send-btn {
+    width: 100%;
+    padding: 5px;
+}
+
+h2{
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 40px;
+}
+
+.para {
+    text-align: center;
+    font-size: 20px;
+    margin: 5px;
+    color: black;
+    background-color: white;
+    height: 50px;
+    line-height: 20px;
+    
+}
+
+
+
+.hey{
+    margin-top: -0px;
+    display: flex;
+    justify-content: center;
+
+}
 
 </style>
 <body>
     <div class="container">
         <div class="navbar">
+            <a href="/dashboard">
             <img src="static\img\logooo.png" alt="" class="logo">
+        </a>
             <nav>
                 <ul>
             
@@ -25,19 +80,27 @@
             </nav>
         </div>
 
-    <div class="row">
-        <div class="col">
-               <h1>Welcome, {{loggedUser.first_name}}</h1>
-               <p>We are delighted to have you here. This platform provides an opportunity for individuals like you to make a positive impact and contribute to meaningful causes. Whether you have a specific concern in mind or simply want to explore various volunteering opportunities, we are here to assist you. Feel free to share your concerns, interests, or any questions you may have. Our dedicated team is ready to guide you on your volunteering journey. Together, let's create a better world through the power of volunteering!</p>
+        <div class="">
+            <h2>Thank you, {{loggedUser.first_name}}, for being interested <br> in volunteering </h2>
+            <p class="para">Volunteering opportunities can be viewed at Concerns page below. However, <br>you can ask our AI about every questions you may have here.</p>
+     </div>
+
+    <div class="row hey">
+
+        <a href="/concern">
+            <div class="card card1">
         </div>
+    </a>
+        <form id="chat-form" action="{{ url_for('process_message') }}" method="post">
+            <div class="chat-container">
+                <div id="chat-log"></div>
+                <input type="text" id="user-input" name="message" placeholder="Type your message..." autofocus>
+                <button id="send-btn" type="submit">Send</button>
+            </div>
+        </form>
+        </div>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/new.js') }}"></script>
 
-        
-
-          </div>
-    </div>
-</div>
-
-</div>
 </body>
 </html>
 

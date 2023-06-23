@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
-
+</html>
     <style>
    
   .t1{
@@ -20,17 +20,13 @@
     margin-top: -450px;
   }
 
-  .small-box {
-      width: 40px;
-      height: 40px;
-      background-color: #ec1313;
-      border: 1px solid #e42d2d;
-    }
-
     img {
       height: 30px;
       width: 30px;
       margin-left: 20px;
+    }
+    h4{
+      color: white;
     }
 </style>
 <body>
@@ -43,12 +39,15 @@
       <a  style="height:40px; margin-top: 20px;"class="btn btn-primary" href="/logout">Logout</a>
     </div>
   </nav>
+
+
   
   <h4>Search locations by coordinates</h4> 
   <input type="text" id="search-input" placeholder="Search">
 
   <div id="map"></div>
 
+  
   
   <script>
     function initMap() {
@@ -97,6 +96,24 @@
       });
     }
   </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var userInput = document.getElementById('search-input');
+    var volunteerButton = document.getElementById('volunteer-button');
+
+    userInput.addEventListener('input', function() {
+      var message = userInput.value.toLowerCase();
+      if (message.includes('thankyou')) {
+        volunteerButton.textContent = 'Thank You';
+        volunteerButton.setAttribute('href', '/thankyou');
+      } else {
+        volunteerButton.textContent = 'Volunteer';
+        volunteerButton.setAttribute('href', '/thankyou');
+      }
+    });
+  });
+</script>
 <!--//////kodi per te vendosur kodin tend API\\\\\ <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap"></script> -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUm-b9XKzft0Xz2bUqVSNCWTokmOBpCGQ&libraries=places&callback=initMap"></script>
 
@@ -130,18 +147,20 @@
                 <td class="table-row-position">{{post.location}}</td>
                 <td class="table-row-position">
                   {% if ',' in post.linki %}
-                    <a href="https://www.google.com/maps?q={{ post.linki }}" target="_blank">{{ post.linki }}</a>
+                  <a href="#" class="view-map-button"
+                    data-coordinates="{{ post.linki }}">{{ post.linki }}</a>
                   {% elif post.linki.startswith('http://') or post.linki.startswith('https://') %}
-                    <a href="{{ post.linki }}" target="_blank">{{ post.linki }}</a>
+                  <a href="{{ post.linki }}" target="_blank">{{ post.linki }}</a>
                   {% else %}
-                    {{ post.linki }}
+                  {{ post.linki }}
                   {% endif %}
                 </td>
                 <td class="table-row-position">{{post.num_saves}} person/s</td>
                 <td class="table-row-position">
 
                 <a class="btn btn-info" href="/post/{{post.id}}">View</a>
-                <a class="btn btn-success" href="/delete/post/{{post.id}}">Volunteer</a>
+                <a id="volunteer-button" class="btn btn-success" href="/thankyou">Volunteer</a>
+
                 {% if post.id in savedposts  %}
                 <a class="btn btn-warning" href="/unsave/{{post.id}}">Undo</a>
                 {% else %}
@@ -164,9 +183,11 @@
     </div>
   </div>
 </div>
-
 </body>
+
 <script type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/scr.js') }}"></script>
+
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVol2KKEIKgW7vpx8DN7jujBVnr9G1TxQ"></script>
 
 

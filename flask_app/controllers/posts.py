@@ -2,17 +2,27 @@ from flask_app import app
 from flask_app.models.user import User
 from flask_app.models.post import Post
 
-from flask import render_template, redirect, session, request, flash
+
+
+from flask import render_template, redirect, session, request, flash, jsonify
 
 from .env import UPLOAD_FOLDER
 from .env import ALLOWED_EXTENSIONS
 from datetime import datetime
 from werkzeug.utils import secure_filename
 import os
+import openai 
+
+
+
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024
 # The limit is 3 MB
+
+
+# Set up your OpenAI API credentials
+openai.api_key = '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'
 
 #Check if the format is right
 def allowed_file(filename):
@@ -203,9 +213,49 @@ def unsavePost(id):
         return redirect(request.referrer)
     return redirect('/')
 
-
 @app.route('/volunteer')
 def volunteer():
-   return render_template('volunteer.html')
+    if 'user_id' not in session:
+        return redirect('/')
+    data = {
+        'user_id': session['user_id']
+    }
 
+    loggedUser = User.get_user_by_id(data)
+    posts = Post.get_all()
+    loggedUserSavedPost = User.get_user_saved_posts(data)
 
+    return render_template('volunteer.html', posts = posts, loggedUser=loggedUser, savedposts = loggedUserSavedPost)
+
+@app.route('/process-message', methods=['POST'])
+def process_message():
+    data = request.get_json()
+    message = data['message']
+
+    # Call the OpenAI API to generate a response
+    response = openai.Completion.create(
+        engine='text-davinci-003',
+        prompt=message,
+        max_tokens=50,
+        temperature=0.7,
+        n=1,
+        stop=None
+    )
+
+    reply = response.choices[0].text.strip()
+
+    return jsonify({'reply': reply})
+
+@app.route('/thankyou')
+def thankyou():
+    if 'user_id' not in session:
+        return redirect('/')
+    data = {
+        'user_id': session['user_id']
+    }
+
+    loggedUser = User.get_user_by_id(data)
+    posts = Post.get_all()
+    loggedUserSavedPost = User.get_user_saved_posts(data)
+
+    return render_template('thankyou.html', posts = posts, loggedUser=loggedUser, savedposts = loggedUserSavedPost)
